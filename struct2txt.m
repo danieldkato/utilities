@@ -1,41 +1,22 @@
 function struct2txt(S, fid)
-     
-    S
-    fields = fieldnames(S);
-    for i = 1:length(fields)
-        field2txt(S, inputname(1), fields{i}, fid);
-    end
-    
-    %{
-    if ~isstruct(S)
-        if isnumeric(S)
-            val = num2str(val);
-        end
-        fprintf(fid, strcat([name, ' = ', val, '; \n']));
-    else
-        flds = fieldnames(S);
-        for i = 1:length(flds)
-            field2txt(S.(flds{i}), fid);
-        end
-    end
-    %}
-    
+     field2txt(S, inputname(1), fid);
 end
 
-function field2txt(parent, baseName, fieldName, fid);
+
+%%
+function field2txt(data, baseName, fid);
     
-    val = parent.(fieldName);
-    if ~isstruct(val)
-        if isnumeric(val)
-            val = num2str(val);
+    if ~isstruct(data)
+        if isnumeric(data)
+            data = num2str(data);
         end
-        fprintf(fid, strcat([baseName, '.', fieldName, ' = ', val, '\n']));
+        fprintf(fid, strcat([baseName ' = ', data, '\n']));
     else
-        baseName = strcat([baseName, '.', fieldName]);
-        parent = parent.(fieldName);
-        subFieldNames = fieldnames(parent);
+        
+        subFieldNames = fieldnames(data);
         for i = 1:length(subFieldNames)
-            field2txt(parent, baseName, subFieldNames{i}, fid);
+            extendedName = strcat([baseName, '.', subFieldNames{i}]);
+            field2txt(data.(subFieldNames{i}), extendedName, fid);
         end
     end
     
