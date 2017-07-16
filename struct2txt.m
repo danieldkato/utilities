@@ -8,16 +8,16 @@ function struct2txt(S, fid)
 
 
 %% I. OVERVIEW
-% This function recursively prints the value of every field of a MATLAB
-% struct to an open .txt file. The function's recursive nature means that
-% it prints the value of every sub-field of any field that is itself a
+% This function recursively prints the name and value of every field of a
+% MATLAB struct to an open .txt file. The function's recursive nature means
+% that it prints the value of every sub-field of any field that is itself a
 % structure.
 
 % Each line of the created text file has the format:
 
 % 'structure.field = value;'
 
-% where any instance of 'field' may itself have the structure 'structure.field'.
+% where 'field' may itself have the structure 'structure.field'.
 
 
 %% II. REQUIREMENTS
@@ -35,23 +35,23 @@ function struct2txt(S, fid)
 
 
 %%
-     field2txt(S, inputname(1), fid);
+     field2txt(inputname(1), S, fid);
 end
 
 
 %%
-function field2txt(data, baseName, fid)
+function field2txt(name, value, fid)
     
-    if ~isstruct(data)
-        if isnumeric(data)
-            data = num2str(data);
+    if ~isstruct(value)
+        if isnumeric(value)
+            value = num2str(value);
         end
-        fprintf(fid, strcat([baseName, ' = ', data, '\n']));
+        fprintf(fid, strcat([name ' = ', value, '\n']));
     else
-        subFieldNames = fieldnames(data);
+        subFieldNames = fieldnames(value);
         for i = 1:length(subFieldNames)
-            extendedName = strcat([baseName, '.', subFieldNames{i}]);
-            field2txt(data.(subFieldNames{i}), extendedName, fid);
+            subFieldName = strcat([name, '.', subFieldNames{i}]);
+            field2txt(subFieldName, value.(subFieldNames{i}), fid);
         end
     end
 
