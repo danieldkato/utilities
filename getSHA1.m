@@ -12,7 +12,8 @@ function SHA1 = getSHA1()
 
 
 %% REQUIREMENTS
-% None (beyond those for running MATLAB).
+% 1) git, available at https://git-scm.com/.
+% 2) Operating system configured to recognize `git` as a command. 
 
 
 %% INPUTS
@@ -24,6 +25,13 @@ function SHA1 = getSHA1()
 % the calling script.
 
 
+%% TODO
+% 1) Check and return some sort of warning if the calling script has
+% uncommitted changes. Recording the SHA-1 of the latest commit will be
+% misleading if the calling script has uncommitted changes. 
+
+% last updated DDK 2017-07-15
+
 %%
     % Get the complete file name of the calling fucntion
     ST = dbstack('-completenames');
@@ -34,5 +42,8 @@ function SHA1 = getSHA1()
     
     % get its SHA1
     [status, SHA1] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
+    
+    % return to the previous working directory
+    cd(old);
     
 end
