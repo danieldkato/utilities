@@ -43,6 +43,10 @@ function SHA1 = getSHA1()
     % get its SHA1
     [status, SHA1] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
     
+    if isempty(SHA1)
+        SHA1 = 'No commits found for current script.';
+    end
+    
     % return to the previous working directory
     cd(old);
     
