@@ -46,7 +46,7 @@ function field2txt(name, value, fid)
         if isnumeric(value)
             value = num2str(value);
         end
-        fprintf(fid, strcat([name ' = ', value, '\n']));
+        fprintf(fid, strcat([name, ' = ', value, '\n']));
     else
         subFieldNames = fieldnames(value);
         for i = 1:length(subFieldNames)
