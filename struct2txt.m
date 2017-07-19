@@ -42,10 +42,14 @@ end
 %%
 function field2txt(name, value, fid)
     
+    disp(name);
+    disp(value);
+
     if ~isstruct(value)
         if isnumeric(value)
             value = num2str(value);
         end
+        value = strrep(value, '\', '\\');
         fprintf(fid, strcat([name, ' = ', value, '\n']));
     else
         subFieldNames = fieldnames(value);
