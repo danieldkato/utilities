@@ -41,16 +41,21 @@ end
 
 %%
 function field2txt(name, value, fid)
-    
-    disp(name);
-    disp(value);
 
     if ~isstruct(value)
-        if isnumeric(value)
-            value = num2str(value);
+        valueStr = value;
+        valueStr = strrep(valueStr, '\', '\\');
+        if isnumeric(value) && length(value) == 1
+            valueStr = num2str(value);
+        elseif isnumeric(value) && length(value) > 1
+                disp('ARRAY');
+                valueStr = '[';
+                for j = 1:length(value)
+                    valueStr = [valueStr num2str(value(j)) ' '];
+                end
+                valueStr = [valueStr(1:end-1) ']'];
         end
-        value = strrep(value, '\', '\\');
-        fprintf(fid, strcat([name, ' = ', value, '\n']));
+        fprintf(fid, strcat([name, ' = ', valueStr, '\n']));
     else
         subFieldNames = fieldnames(value);
         for i = 1:length(subFieldNames)
