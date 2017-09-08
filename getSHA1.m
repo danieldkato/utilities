@@ -1,4 +1,4 @@
-function SHA1 = getSHA1(varargin)
+function [warnOut, latestSHA1] = getSHA1(varargin)
 
 % DOCUMENTATION TABLE OF CONTENTS
 % I. OVERVIEW
@@ -35,7 +35,7 @@ function SHA1 = getSHA1(varargin)
 
 
 %% IV. INPUTS
-% 1) path - path to a file of which the SHA hash of the most recent git
+% 1) path - absolute path to a file of which the SHA hash of the most recent git
 % commit will be returned.
 
 % If no input argument is provided, this function will return the SHA1 hash
@@ -52,31 +52,54 @@ function SHA1 = getSHA1(varargin)
 % uncommitted changes. Recording the SHA-1 of the latest commit will be
 % misleading if the calling script has uncommitted changes. 
 
-% last updated DDK 2017-07-15
+% last updated DDK 2017-09-08
 
 
-%%
-    % Get the name of the function to get the commit for:
-    if nargin<1
-        ST = dbstack('-completenames');
-        path = ST(2).file;
-    else
-        path = varargin{1};
-    end
+%% Setup:
+warnOut = []; % if there are no warnings, this will be empty
+latestSHA1 = []; % if the SHA1 digest of the latest commit can't be found, this will remain empty
+
+% Get the name of the function to try to find the commit for:
+if nargin<1
+    ST = dbstack('-completenames');
+    path = ST(2).file;
+else
+    path = varargin{1};
+end
+[pathstr, filename, ext] = fileparts(path);
+
+% cd to the direcory of the fucntion:
+old = cd(pathstr);
+
+
+%% First check if file is under git control:
+[error, out] = system(strcat(['git ls-files --error-unmatch ', filename, ext]));
+
+% If not, throw a warning and halt execution
+if error == 1
+    warnMsg = out;
+    warnOut = warnMsg;
+    warning(warnMsg);
+    return
+end
     
-    [pathstr, filename, ext] = fileparts(path);
     
-    % cd to the direcory of the calling fucntion:
-    old = cd(pathstr);
+%% Check if file has any uncommitted changes:
+[error, out] = system(strcat(['git diff -- ', filename, ext]));
+
+if ~isempty(out)
+    warnMsg = strcat(['Warning: uncommitted changes detected in ', filename, ext, '. It is advised to commit or stash any changes before proceeding.']);
+    warnOut = warnMsg;
+    warning(warnMsg);
+end
+
+
+%% If the file is under git control, find the SHA1 digest of the latest commit:
+[status, latestSHA1] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
+  
+
+%% Return to the previous working directory
+cd(old);
     
-    % Get its SHA1:
-    [status, SHA1] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
-    
-    if isempty(SHA1)
-        SHA1 = 'No commits found for current script.';
-    end
-    
-    % Return to the previous working directory
-    cd(old);
     
 end
