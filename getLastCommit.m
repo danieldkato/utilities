@@ -1,4 +1,4 @@
-function [warnOut, latestSHA1] = getSHA1(varargin)
+function [warnOut, lastCommit] = getLastCommit(varargin)
 
 % DOCUMENTATION TABLE OF CONTENTS
 % I. OVERVIEW
@@ -9,14 +9,18 @@ function [warnOut, latestSHA1] = getSHA1(varargin)
 
 
 %% I. OVERVIEW
-% This function returns the SHA1 hash of the most recent git commit of a
+% This function returns the SHA1 digest of the most recent git commit of a
 % given file. If no file is specified in the input, it returns the SHA1
-% hash of the most recent git commit of the calling script.
+% digest of the most recent git commit of the calling script.
 
+% Note that this function returns the SHA1 digest of the latest GIT COMMIT
+% of the input file, NOT the SHA1 digest of the FILE ITSELF; the SHA1
+% digest of the git commit includes additional information like the date,
+% time, user, etc.
 
 %% II. SYNTAX
-% SHA1 = getSHA1()
-% SHA1 = getSHA1(path)
+% [warnOut, lastCommit] = getLastCommit()
+% [warnOut, lastCommit] = getLastCommit(path)
 
 
 %% III. REQUIREMENTS
@@ -43,21 +47,22 @@ function [warnOut, latestSHA1] = getSHA1(varargin)
 
 
 %% OUTPUTS
-% 1) SHA1 - char array containing the SHA1 of the most recent git commit of
-% the calling script.
+% 1) warning - char array containing any warnings or errors returned by
+% system call to git (e.g., if input file is not under git control or if
+% file has uncommitted changes)
 
-
-%% TODO
-% 1) Check and return some sort of warning if the calling script has
-% uncommitted changes. Recording the SHA-1 of the latest commit will be
-% misleading if the calling script has uncommitted changes. 
+% 1) lastCommit - char array containing the SHA1 digest of the most recent
+% git commit of the input file. Note that this is the SHA1 digest of the
+% latest GIT COMMIT of the input file, NOT the SHA1 digest of the FILE
+% ITSELF; the SHA1 digest of the git commit includes additional information
+% like the date, time, user, etc.
 
 % last updated DDK 2017-09-08
 
 
 %% Setup:
 warnOut = []; % if there are no warnings, this will be empty
-latestSHA1 = []; % if the SHA1 digest of the latest commit can't be found, this will remain empty
+lastCommit = []; % if the SHA1 digest of the latest commit can't be found, this will remain empty
 
 % Get the name of the function to try to find the commit for:
 if nargin<1
@@ -96,7 +101,7 @@ end
 
 
 %% If the file is under git control, find the SHA1 digest of the latest commit:
-[status, latestSHA1] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
+[status, lastCommit] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
   
 
 %% Return to the previous working directory
