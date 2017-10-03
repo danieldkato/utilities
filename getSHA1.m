@@ -76,10 +76,11 @@ old = cd(pathstr);
 [error, out] = system(strcat(['git ls-files --error-unmatch ', filename, ext]));
 
 % If not, throw a warning and halt execution
-if error == 1
+if error == 128
     warnMsg = out;
     warnOut = warnMsg;
     warning(warnMsg);
+    cd(old);
     return
 end
     
