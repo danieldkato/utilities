@@ -25,6 +25,7 @@ function [warnOut, lastCommit] = getLastCommit(varargin)
 
 %% III. REQUIREMENTS
 % 1) git, available at https://git-scm.com/.
+%
 % 2) Operating system configured to recognize `git` as a command. If `git`
 % is not automatically recognized as a command after installing on Windows,
 % add it to the Path environment variable as follows:
@@ -36,6 +37,9 @@ function [warnOut, lastCommit] = getLastCommit(varargin)
 %      <path\to>\Git\bin\git.exe;<path\to>\Git\cmd;
 %       
 %      where <path\to> it the absolute path of the directory where the top-level Git folder is located
+%
+% 3) If running on Linux via ssh, this function requires the MATLAB-git
+% toolbox, available at http://www.mathworks.com/matlabcentral/fileexchange/29154-a-thin-matlab-wrapper-for-the-git-source-control-system
 
 
 %% IV. INPUTS
@@ -78,10 +82,14 @@ old = cd(pathstr);
 
 
 %% First check if file is under git control:
-[error, out] = system(strcat(['git ls-files --error-unmatch ', filename, ext]));
-
+if ispc
+    [err, out] = system(strcat(['git ls-files --error-unmatch ', filename, ext]));
+elseif isunix
+    out = evalc(['git ls-files --error-unmatch ' filename ext]);
+end
+    
 % If not, throw a warning and halt execution
-if error == 128
+if contains(out, 'error:') || contains(out, 'fatal:') 
     warnMsg = out;
     warnOut = warnMsg;
     warning(warnMsg);
@@ -90,9 +98,13 @@ if error == 128
 end
     
     
-%% Check if file has any uncommitted changes:
-[error, out] = system(strcat(['git diff -- ', filename, ext]));
-
+%% If the file is under git cotrol, check if file has any uncommitted changes:
+if ispc
+    [err, out] = system(strcat(['git diff -- ', filename, ext]));
+elseif isunix
+    out = evalc(['git diff ' filename ext]);
+end
+    
 if ~isempty(out)
     warnMsg = strcat(['Warning: uncommitted changes detected in ', filename, ext, '. It is advised to commit or stash any changes before proceeding.']);
     warnOut = warnMsg;
@@ -101,8 +113,13 @@ end
 
 
 %% If the file is under git control, find the SHA1 digest of the latest commit:
-[status, lastCommit] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
-  
+if ispc
+    [status, lastCommit] = system(strcat(['git log -n 1 --pretty=format:%H -- ', filename, ext]));
+elseif isunix
+    header = 'commit';
+    out = evalc(['git log -n 1 ' filename ext]);
+    lastCommit = out(length(header)+1:length(header)+41);
+end
 
 %% Return to the previous working directory
 cd(old);
