@@ -1,4 +1,4 @@
-function writeMetadata(Metadata,metadata_path)    
+function write_metadata(Metadata,metadata_path)    
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
