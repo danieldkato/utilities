@@ -1,4 +1,4 @@
-function write_metadata(Metadata,metadata_path)    
+function Metadata = write_metadata(Metadata,metadata_path)    
 
 % DOCUMENTATION TABLE OF CONTENTS:
 % I. OVERVIEW
@@ -6,7 +6,7 @@ function write_metadata(Metadata,metadata_path)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-10-31
+% Last updated DDK 2017-11-29
 
 
 %% I. OVERVIEW:
@@ -43,9 +43,9 @@ function write_metadata(Metadata,metadata_path)
 
 
 %% IV. OUTPUTS:
-% This function does not have any formal return, but creates a JSON file
-% containing metadata about the analysis performed by the calling function.
-% This file minimally includes the following fields:
+% This function returns a struct containing metadata about the analysis
+% performed by the calling function. This struct minimally includes the
+% following fields:
 
 %   a) inputs - an array of structs each representing a file that contains
 %   some kind of input to the calling function. Each element of `inputs`
@@ -62,8 +62,11 @@ function write_metadata(Metadata,metadata_path)
 
 %   e) host_name - name of the computer on which the analysis was run. 
 
-% In addition, the output JSON file will include any other fields included
-% in the input `Metadata` struct. 
+% In addition, this output struct will include any other fields included in
+% the input `Metadata` struct.
+
+% In addition to formally returning an output Metadata struct, this
+% fucntion also saves the struct to secondary storage as a JSON file.
 
 
 %% TODO: 
