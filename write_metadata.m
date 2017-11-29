@@ -106,7 +106,7 @@ for dependency = 1:length(dependencies)
     Metadata.dependencies(dependency).path = dep_path;
     [warn, last_commit] = getLastCommit(dep_path);
     
-    if ~ismepty(last_commit)
+    if ~isempty(last_commit)
         Metadata.dependencies(dependency).last_commit = last_commit; 
     end
     
