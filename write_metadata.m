@@ -126,15 +126,8 @@ t = now;
 dstr = datestr(t, 'yyyy-mm-dd');
 Metadata.date = dstr;
 
-% Write time info only if Metadata doesn't already have one; if the outputs
-% take a long time to save, we might want the metadata time to be the time
-% that the analysis was started, not completed, in which case it's the
-% responsibility of the calling function to set Metadata.time at the
-% beginning of the analysis:
-if ~isfield(Metadata, 'time')
-    tstr = datestr(t, 'HH:MM:SS');
-    Metadata.time = tstr;
-end
+tstr = datestr(t, 'HH:MM:SS');
+Metadata.time = tstr;
 
 
 %% Get other misc info:
