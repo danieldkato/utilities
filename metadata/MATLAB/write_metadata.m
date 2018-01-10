@@ -6,7 +6,7 @@ function Metadata = write_metadata(Metadata,metadata_path)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-11-29
+% Last updated DDK 2017-12-29
 
 
 %% I. OVERVIEW:
@@ -27,8 +27,8 @@ function Metadata = write_metadata(Metadata,metadata_path)
 
 %   a) inputs - an array of structs each representing a file that contains
 %   some kind of input to the calling function. Each element of `inputs`
-%   must minimally include a `path` field stating the absolute path to the
-%   input file. 
+%   must minimally include the fields: 
+%        i) `path` - field stating the absolute path to the input file. 
 
 %   b) outputs - same as `inputs`, but for output files saved by the
 %   calling function. 
@@ -86,8 +86,7 @@ for io = 1:length(io_struct_names)
     substruct = io_struct_names{io};
     
     for file = 1:length(Metadata.(substruct))
-        [status, cmdout] = system(['sha1sum ' Metadata.(substruct)(file).path]);
-        Metadata.(substruct)(file).sha1 = cmdout(1:40);
+        Metadata.(substruct)(file).sha1 = get_sha1(Metadata.(substruct)(file).path));
     end
     
 end
