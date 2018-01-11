@@ -86,7 +86,7 @@ for io = 1:length(io_struct_names)
     substruct = io_struct_names{io};
     
     for file = 1:length(Metadata.(substruct))
-        Metadata.(substruct)(file).sha1 = get_sha1(Metadata.(substruct)(file).path));
+        Metadata.(substruct)(file).sha1 = get_sha1(Metadata.(substruct)(file).path);
     end
     
 end
