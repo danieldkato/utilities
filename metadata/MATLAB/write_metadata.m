@@ -85,7 +85,15 @@ for io = 1:length(io_struct_names)
     
     substruct = io_struct_names{io};
     
+    if io == 1
+        io_type_description = 'input';
+    elseif io == 2
+        io_type_description = 'output';
+    end
+    
     for file = 1:length(Metadata.(substruct))
+        disp(['Computing sha1 checksum for ' io_type_description 'file ' num2str(file) ' out of ' num2str(length(Metadata.(substruct)))]);
+        disp(Metadata.(substruct)(file).path);
         Metadata.(substruct)(file).sha1 = get_sha1(Metadata.(substruct)(file).path);
     end
     
