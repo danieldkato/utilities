@@ -89,7 +89,7 @@ elseif isunix
 end
     
 % If not, throw a warning and halt execution
-if contains(out, 'error:') || contains(out, 'fatal:') 
+if ~isempty(strfind(out, 'error:')) || ~isempty(strfind(out, 'fatal:')) 
     warnMsg = out;
     warnOut = warnMsg;
     warning(warnMsg);

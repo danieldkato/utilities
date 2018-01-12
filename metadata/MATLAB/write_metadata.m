@@ -6,7 +6,7 @@ function Metadata = write_metadata(Metadata,metadata_path)
 % III. INPUTS
 % IV. OUTPUTS
 
-% Last updated DDK 2017-12-29
+% Last updated DDK 2018-12-29
 
 
 %% I. OVERVIEW:
@@ -98,7 +98,7 @@ end
 disp('Finding software dependencies...')
 dependencies = inmem('-completenames');
 disp('... done.');
-dependencies = dependencies(cellfun(@(x) ~contains(x,matlabroot), dependencies)); % filter out core MATLAB functions... this would be way too many! (>600)
+dependencies = dependencies(cellfun(@(x) isempty(strfind(x, matlabroot)), dependencies)); % filter out core MATLAB functions... this would be way too many! (>600)
 
 % Once we have a list of the dependencies of the calling function, try to get the last git commit for each: 
 for dependency = 1:length(dependencies)
